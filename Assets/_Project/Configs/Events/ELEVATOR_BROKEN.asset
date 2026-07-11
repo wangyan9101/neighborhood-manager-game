@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73c4fa52f7e5a314d9a2ef5c8b9309ca, type: 3}
+  m_Name: ELEVATOR_BROKEN
+  m_EditorClassIdentifier: NeighborhoodManager.Runtime::NeighborhoodManager.Configs.EventConfig
+  EventId: ELEVATOR_BROKEN
+  DisplayName: "\u7535\u68AF\u6545\u969C"
+  Description: "\u7535\u68AF\u505C\u6B62\u8FD0\u884C\uFF0C\u9700\u8981\u5C3D\u5FEB\u7EF4\u4FEE\u3002"
+  EventType: 1
+  FacilityType: 1
+  Urgency: 1
+  PendingTimeLimit: 32
+  BaseHandleDuration: 12
+  BudgetCost: 300
+  RecommendedWorkerType: 0
+  SuccessBudgetDelta: 0
+  SuccessSatisfactionDelta: 5
+  SuccessComplaintDelta: -2
+  SuccessFacilityHealthDelta: 8
+  FailureBudgetDelta: 0
+  FailureSatisfactionDelta: -8
+  FailureComplaintDelta: 3
+  FailureFacilityHealthDelta: -8

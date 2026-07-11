@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73c4fa52f7e5a314d9a2ef5c8b9309ca, type: 3}
+  m_Name: CAMERA_OFFLINE
+  m_EditorClassIdentifier: NeighborhoodManager.Runtime::NeighborhoodManager.Configs.EventConfig
+  EventId: CAMERA_OFFLINE
+  DisplayName: "\u6444\u50CF\u5934\u79BB\u7EBF"
+  Description: "\u516C\u5171\u533A\u57DF\u6444\u50CF\u5934\u5931\u53BB\u8FDE\u63A5\u3002"
+  EventType: 2
+  FacilityType: 4
+  Urgency: 1
+  PendingTimeLimit: 26
+  BaseHandleDuration: 11
+  BudgetCost: 200
+  RecommendedWorkerType: 1
+  SuccessBudgetDelta: 0
+  SuccessSatisfactionDelta: 2
+  SuccessComplaintDelta: -1
+  SuccessFacilityHealthDelta: 6
+  FailureBudgetDelta: 0
+  FailureSatisfactionDelta: -3
+  FailureComplaintDelta: 1
+  FailureFacilityHealthDelta: -5

@@ -1,0 +1,8 @@
+{
+  "name": "NeighborhoodManager.EditModeTests",
+  "rootNamespace": "NeighborhoodManager.Tests",
+  "references": ["NeighborhoodManager.Runtime"],
+  "includePlatforms": ["Editor"],
+  "optionalUnityReferences": ["TestAssemblies"],
+  "autoReferenced": false
+}

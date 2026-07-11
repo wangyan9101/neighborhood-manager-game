@@ -1,0 +1,10 @@
+{
+  "name": "NeighborhoodManager.Runtime",
+  "rootNamespace": "NeighborhoodManager",
+  "references": [
+    "Unity.InputSystem",
+    "Unity.TextMeshPro",
+    "UnityEngine.UI"
+  ],
+  "autoReferenced": true
+}

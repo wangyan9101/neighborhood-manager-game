@@ -1,0 +1,12 @@
+{
+  "name": "NeighborhoodManager.Editor",
+  "rootNamespace": "NeighborhoodManager.Editor",
+  "references": [
+    "NeighborhoodManager.Runtime",
+    "Unity.InputSystem",
+    "Unity.TextMeshPro",
+    "UnityEngine.UI"
+  ],
+  "includePlatforms": ["Editor"],
+  "autoReferenced": true
+}
