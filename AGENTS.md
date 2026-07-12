@@ -23,6 +23,15 @@ Use **File > Build Profiles** for local player builds; no scripted build pipelin
 
 Set `$Unity` to the editor executable above. Also open `SampleScene` and enter Play Mode before submitting gameplay changes.
 
+## Windows Development Rules
+
+- Do not run long-lived development servers such as `pnpm dev`.
+- The user starts the development server manually.
+- You may run `pnpm lint`, `pnpm typecheck`, `pnpm test`, and one-off builds.
+- Do not modify ACLs, ownership, or Windows security permissions.
+- Do not run commands as administrator.
+- Do not use `takeown` or `icacls` unless explicitly requested.
+
 ## Coding Style & Naming Conventions
 
 Use C# with four-space indentation and braces on separate lines. Name types, methods, properties, scenes, prefabs, and ScriptableObject assets in `PascalCase`; use `camelCase` for locals and private fields. Prefer `[SerializeField] private` fields over public mutable state. Keep each primary type in a same-named `.cs` file and separate runtime logic from `UnityEditor` dependencies. No formatter or linter is configured, so match nearby code and remove unused imports.
