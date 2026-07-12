@@ -6,7 +6,7 @@ namespace NeighborhoodManager.Configs
     public sealed class GameBalanceConfig : ScriptableObject
     {
         [Header("Initial Resources")]
-        public int InitialBudget = 5000;
+        public int InitialBudget = 2800;
         public int InitialSatisfaction = 70;
         public int InitialComplaintCount = 3;
         public int InitialFacilityHealth = 80;
@@ -16,16 +16,16 @@ namespace NeighborhoodManager.Configs
         [Min(1)] public int MaxDayCount = 5;
 
         [Header("Events")]
-        [Min(1)] public int MaxActiveEventCount = 5;
-        [Min(0.1f)] public float MinEventSpawnInterval = 20f;
-        [Min(0.1f)] public float MaxEventSpawnInterval = 40f;
+        [Min(1)] public int MaxActiveEventCount = 4;
+        [Min(0.1f)] public float MinEventSpawnInterval = 12f;
+        [Min(0.1f)] public float MaxEventSpawnInterval = 22f;
 
         [Header("Daily Economy")]
-        public int DailyBaseIncome = 1000;
+        public int DailyBaseIncome = 600;
         public int HighSatisfactionThreshold = 80;
-        public int HighSatisfactionBonus = 300;
-        public int LowSatisfactionThreshold = 40;
-        public int LowSatisfactionPenalty = 300;
+        public int HighSatisfactionBonus = 200;
+        public int LowSatisfactionThreshold = 45;
+        public int LowSatisfactionPenalty = 200;
 
         [Header("Failure Limits")]
         public int FailureSatisfactionLimit = 20;

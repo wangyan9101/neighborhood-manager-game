@@ -35,9 +35,8 @@ namespace NeighborhoodManager.UI
         public void Show(DayReportModel report, Action onContinue)
         {
             continued = onContinue;
-            reportText.text = $"第 {report.DayIndex} 天结算\n评级：{report.Grade}\n收入：{report.Income}  支出：{report.Expense}\n"
-                + $"完成：{report.CompletedEventCount}  失败：{report.FailedEventCount}\n预算变化：{report.BudgetDelta}\n"
-                + $"满意度：{report.SatisfactionDelta}  投诉：{report.ComplaintDelta}  健康：{report.FacilityHealthDelta}";
+            reportText.text = UiTextFormatter.FormatDayReport(report);
+            continueButton.interactable = true;
             gameObject.SetActive(true);
         }
 
@@ -45,8 +44,12 @@ namespace NeighborhoodManager.UI
 
         private void Continue()
         {
+            if (!continueButton.interactable) return;
+            continueButton.interactable = false;
             Hide();
-            continued?.Invoke();
+            Action callback = continued;
+            continued = null;
+            callback?.Invoke();
         }
 
         private void BindButton()

@@ -156,6 +156,11 @@ MonoBehaviour:
   detailText: {fileID: 1434545112}
   selectButton: {fileID: 1774035061}
   background: {fileID: 40639729}
+  normalCountdownColor: {r: 1, g: 1, b: 1, a: 1}
+  warningCountdownColor: {r: 1, g: 0.82, b: 0.2, a: 1}
+  criticalCountdownColor: {r: 1, g: 0.3, b: 0.25, a: 1}
+  normalBackgroundColor: {r: 0.12, g: 0.16, b: 0.22, a: 0.9}
+  selectedBackgroundColor: {r: 0.25, g: 0.55, b: 0.85, a: 0.9}
 --- !u!114 &40639729
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -250,7 +255,7 @@ MonoBehaviour:
   m_MinWidth: -1
   m_MinHeight: -1
   m_PreferredWidth: -1
-  m_PreferredHeight: 140
+  m_PreferredHeight: 170
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
@@ -1940,9 +1945,13 @@ MonoBehaviour:
   balanceConfig: {fileID: 11400000, guid: cebaeac16f9245342af6b5a53db9800f, type: 2}
   eventConfigs:
   - {fileID: 11400000, guid: b80dd4ae5575ac94f868ef4ba59ef8cd, type: 2}
+  - {fileID: 11400000, guid: 40408aebd3213be4c80a577349c7cd12, type: 2}
+  - {fileID: 11400000, guid: 3e28b319ee13d98469bf3367e0843b2b, type: 2}
   - {fileID: 11400000, guid: c8c49ec678f8a5d4196b2d0e77bdbe0c, type: 2}
+  - {fileID: 11400000, guid: b44a0357b4c03fc489329866aa8a615e, type: 2}
   - {fileID: 11400000, guid: 2de5a29ecb056904cb63a089824a7c06, type: 2}
   - {fileID: 11400000, guid: b2e4ee1c1df5b53468c4004598e15735, type: 2}
+  - {fileID: 11400000, guid: 9856483dc10d4184da1ea5e15a1e1f01, type: 2}
   - {fileID: 11400000, guid: b9cbf7c1e3f618b44bfa9223080b7df4, type: 2}
   workerConfigs:
   - {fileID: 11400000, guid: 6488bd3d37b1bf44583f50999bc1f549, type: 2}
@@ -3830,10 +3839,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 777f1b47b1f884d40adfaf36353fc447, type: 3}
   m_Name: 
   m_EditorClassIdentifier: NeighborhoodManager.Runtime::NeighborhoodManager.Scene.CameraController
+  dragButton: 0
   dragSpeed: 0.02
   zoomSpeed: 0.02
-  minimumHeight: 8
-  maximumHeight: 35
+  xLimits: {x: -18, y: 18}
+  zLimits: {x: -28, y: 12}
+  minimumFieldOfView: 35
+  maximumFieldOfView: 70
+  gameRoot: {fileID: 486307510}
 --- !u!81 &951947912
 AudioListener:
   m_ObjectHideFlags: 0
@@ -4878,7 +4891,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 650, y: 520}
+  m_SizeDelta: {x: 760, y: 700}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1245840503
 MonoBehaviour:
@@ -7285,7 +7298,7 @@ MonoBehaviour:
   m_MinWidth: -1
   m_MinHeight: -1
   m_PreferredWidth: -1
-  m_PreferredHeight: 105
+  m_PreferredHeight: 140
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
@@ -7654,7 +7667,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 650, y: 520}
+  m_SizeDelta: {x: 760, y: 700}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1930774425
 MonoBehaviour:

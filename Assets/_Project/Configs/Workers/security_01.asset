@@ -16,4 +16,4 @@ MonoBehaviour:
   DisplayName: "\u4FDD\u5B89"
   WorkerType: 1
   MatchDurationMultiplier: 1
-  MismatchDurationMultiplier: 1.5
+  MismatchDurationMultiplier: 1.6

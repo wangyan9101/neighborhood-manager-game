@@ -12,20 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7760065f82c4e6741826ab3f344abb24, type: 3}
   m_Name: GameBalanceConfig
   m_EditorClassIdentifier: NeighborhoodManager.Runtime::NeighborhoodManager.Configs.GameBalanceConfig
-  InitialBudget: 5000
+  InitialBudget: 2800
   InitialSatisfaction: 70
   InitialComplaintCount: 3
   InitialFacilityHealth: 80
   DayLengthSeconds: 60
   MaxDayCount: 5
-  MaxActiveEventCount: 5
-  MinEventSpawnInterval: 20
-  MaxEventSpawnInterval: 40
-  DailyBaseIncome: 1000
+  MaxActiveEventCount: 4
+  MinEventSpawnInterval: 12
+  MaxEventSpawnInterval: 22
+  DailyBaseIncome: 600
   HighSatisfactionThreshold: 80
-  HighSatisfactionBonus: 300
-  LowSatisfactionThreshold: 40
-  LowSatisfactionPenalty: 300
+  HighSatisfactionBonus: 200
+  LowSatisfactionThreshold: 45
+  LowSatisfactionPenalty: 200
   FailureSatisfactionLimit: 20
   FailureComplaintLimit: 20
   FailureFacilityHealthLimit: 10

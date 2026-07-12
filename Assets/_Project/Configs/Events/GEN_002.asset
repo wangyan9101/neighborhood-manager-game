@@ -10,23 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 73c4fa52f7e5a314d9a2ef5c8b9309ca, type: 3}
-  m_Name: NOISE_COMPLAINT
+  m_Name: GEN_002
   m_EditorClassIdentifier: NeighborhoodManager.Runtime::NeighborhoodManager.Configs.EventConfig
-  EventId: NOISE_COMPLAINT
-  DisplayName: "\u5C45\u6C11\u566A\u97F3\u6295\u8BC9"
-  Description: "\u5C45\u6C11\u6295\u8BC9\u6301\u7EED\u566A\u97F3\u5F71\u54CD\u4F11\u606F\u3002"
-  EventType: 0
+  EventId: GEN_002
+  DisplayName: "\u697C\u9053\u5806\u653E\u7EB8\u7BB1"
+  Description: "\u697C\u9053\u5806\u653E\u7EB8\u7BB1\u5F71\u54CD\u901A\u884C\u548C\u516C\u5171\u73AF\u5883\u3002"
+  EventType: 3
   FacilityType: 7
   Urgency: 0
-  PendingTimeLimit: 55
-  BaseHandleDuration: 16
-  BudgetCost: 80
+  PendingTimeLimit: 50
+  BaseHandleDuration: 18
+  BudgetCost: 100
   RecommendedWorkerType: 2
   SuccessBudgetDelta: 0
-  SuccessSatisfactionDelta: 2
+  SuccessSatisfactionDelta: 3
   SuccessComplaintDelta: -2
   SuccessFacilityHealthDelta: 0
   FailureBudgetDelta: 0
-  FailureSatisfactionDelta: -4
+  FailureSatisfactionDelta: -3
   FailureComplaintDelta: 2
   FailureFacilityHealthDelta: 0

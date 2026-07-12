@@ -28,10 +28,12 @@ namespace NeighborhoodManager.UI
         {
             dayText.text = $"第 {state.CurrentDay} 天";
             timeText.text = $"剩余 {Mathf.CeilToInt(state.DayRemainingTime)} 秒";
-            budgetText.text = $"预算 ¥{state.Resources.Budget}";
-            satisfactionText.text = $"满意度 {state.Resources.Satisfaction}";
-            complaintText.text = $"投诉 {state.Resources.ComplaintCount}";
-            healthText.text = $"设备健康 {state.Resources.FacilityHealth}";
+            budgetText.text = $"预算：¥{state.Resources.Budget}{Warning(state.Resources.Budget <= 500, "紧张")}";
+            satisfactionText.text = $"满意度：{state.Resources.Satisfaction}{Warning(state.Resources.Satisfaction <= 30, "危险")}";
+            complaintText.text = $"投诉：{state.Resources.ComplaintCount}{Warning(state.Resources.ComplaintCount >= 10, "偏高")}";
+            healthText.text = $"设备健康：{state.Resources.FacilityHealth}{Warning(state.Resources.FacilityHealth <= 30, "危险")}";
         }
+
+        private static string Warning(bool active, string label) => active ? $" [{label}]" : string.Empty;
     }
 }

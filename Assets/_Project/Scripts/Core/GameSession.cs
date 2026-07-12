@@ -56,6 +56,7 @@ namespace NeighborhoodManager.Core
         {
             EnsureInitialized();
             gameLoop.Tick(deltaTime);
+            TryEndForBudgetFailure();
         }
 
         public DispatchResult TryDispatch(string eventRuntimeId, string workerId)
@@ -64,6 +65,19 @@ namespace NeighborhoodManager.Core
             DispatchResult result = dispatchSystem.TryDispatch(eventRuntimeId, workerId);
             LogAdded?.Invoke(result.Message);
             return result;
+        }
+
+        public float? GetExpectedHandleDuration(string eventRuntimeId, string workerId)
+        {
+            EnsureInitialized();
+            GameEventRuntime gameEvent = eventSystem.GetById(eventRuntimeId);
+            WorkerRuntime worker = workerSystem.GetById(workerId);
+            if (gameEvent == null || worker == null)
+            {
+                return null;
+            }
+
+            return dispatchSystem.CalculateHandleDuration(gameEvent.Config, worker);
         }
 
         public void ContinueAfterDayReport()
@@ -136,6 +150,21 @@ namespace NeighborhoodManager.Core
                 State.Phase = result.IsVictory ? GamePhase.Victory : GamePhase.Failed;
                 GameEnded?.Invoke(result);
             }
+        }
+
+        private void TryEndForBudgetFailure()
+        {
+            if (State.Phase != GamePhase.Playing || State.Resources.Budget > 0
+                || !State.ActiveEvents.Exists(gameEvent => gameEvent.State == EventState.Pending))
+            {
+                return;
+            }
+
+            GameResult result = reportSystem.CreateFinalResult(
+                eventSystem.DailyCompletedCount, eventSystem.DailyFailedCount, true);
+            State.Phase = GamePhase.Failed;
+            LogAdded?.Invoke(result.Message);
+            GameEnded?.Invoke(result);
         }
 
         private void EnsureInitialized()

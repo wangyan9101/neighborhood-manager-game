@@ -11,6 +11,7 @@ namespace NeighborhoodManager.Models
         public EventConfig Config;
         public EventState State;
         public float PendingRemainingTime;
+        public float HandlingDuration;
         public float HandlingRemainingTime;
         public string AssignedWorkerId;
         public int CreatedDay;

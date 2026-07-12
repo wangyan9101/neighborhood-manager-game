@@ -125,19 +125,21 @@ namespace NeighborhoodManager.Systems
         private void Complete(GameEventRuntime gameEvent)
         {
             gameEvent.State = EventState.Completed;
-            resourceSystem.ApplyEventImpact(gameEvent.Config, true);
+            WorkerRuntime worker = workerSystem.GetById(gameEvent.AssignedWorkerId);
+            ResourceDelta delta = resourceSystem.ApplyEventImpact(gameEvent.Config, true);
             workerSystem.Release(gameEvent.AssignedWorkerId);
             DailyCompletedCount++;
-            LogAdded?.Invoke($"{gameEvent.Config.DisplayName}处理完成。");
+            string actor = worker == null ? string.Empty : worker.WorkerName;
+            LogAdded?.Invoke($"{actor}完成{gameEvent.Config.DisplayName}：{ResourceDeltaFormatter.Format(delta)}");
         }
 
         private void Fail(GameEventRuntime gameEvent)
         {
             gameEvent.State = EventState.Failed;
-            resourceSystem.ApplyEventImpact(gameEvent.Config, false);
+            ResourceDelta delta = resourceSystem.ApplyEventImpact(gameEvent.Config, false);
             workerSystem.Release(gameEvent.AssignedWorkerId);
             DailyFailedCount++;
-            LogAdded?.Invoke($"{gameEvent.Config.DisplayName}处理超时。");
+            LogAdded?.Invoke($"{gameEvent.Config.DisplayName}超时失败：{ResourceDeltaFormatter.Format(delta)}");
         }
     }
 }

@@ -70,13 +70,13 @@ namespace NeighborhoodManager.Tests
         }
 
         [Test]
-        public void MismatchedWorkerUsesOnePointFiveDuration()
+        public void MismatchedWorkerUsesOnePointSixDuration()
         {
             TestContextData context = CreateContext(WorkerType.Security, 100);
 
             context.Dispatch.TryDispatch("event_1", "worker_1");
 
-            Assert.That(context.Event.HandlingRemainingTime, Is.EqualTo(15f).Within(0.001f));
+            Assert.That(context.Event.HandlingRemainingTime, Is.EqualTo(16f).Within(0.001f));
         }
 
         [Test]
@@ -213,7 +213,7 @@ namespace NeighborhoodManager.Tests
             config.DisplayName = "测试员工";
             config.WorkerType = type;
             config.MatchDurationMultiplier = 1f;
-            config.MismatchDurationMultiplier = 1.5f;
+            config.MismatchDurationMultiplier = 1.6f;
             createdObjects.Add(config);
             return config;
         }

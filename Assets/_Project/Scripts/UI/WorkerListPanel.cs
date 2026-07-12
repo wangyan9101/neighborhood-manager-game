@@ -18,7 +18,8 @@ namespace NeighborhoodManager.UI
             if (prefab != null) prefab.gameObject.SetActive(false);
         }
 
-        public void Refresh(IReadOnlyList<WorkerRuntime> workers, bool hasSelectedEvent, Action<string> onDispatch)
+        public void Refresh(IReadOnlyList<WorkerRuntime> workers, GameEventRuntime selectedEvent,
+            IReadOnlyList<GameEventRuntime> events, Func<string, float?> getExpectedDuration, Action<string> onDispatch)
         {
             EnsureCapacity(workers.Count);
             for (int index = 0; index < items.Count; index++)
@@ -27,9 +28,22 @@ namespace NeighborhoodManager.UI
                 items[index].gameObject.SetActive(active);
                 if (active)
                 {
-                    items[index].Bind(workers[index], hasSelectedEvent, onDispatch);
+                    WorkerRuntime worker = workers[index];
+                    GameEventRuntime currentEvent = string.IsNullOrEmpty(worker.CurrentEventRuntimeId) ? null
+                        : FindEvent(events, worker.CurrentEventRuntimeId);
+                    float? expectedDuration = selectedEvent == null ? null : getExpectedDuration(worker.WorkerId);
+                    items[index].Bind(worker, selectedEvent, currentEvent, expectedDuration, onDispatch);
                 }
             }
+        }
+
+        private static GameEventRuntime FindEvent(IReadOnlyList<GameEventRuntime> events, string runtimeId)
+        {
+            for (int index = 0; index < events.Count; index++)
+            {
+                if (events[index].RuntimeId == runtimeId) return events[index];
+            }
+            return null;
         }
 
         private void EnsureCapacity(int count)

@@ -13,5 +13,6 @@ namespace NeighborhoodManager.Models
         public int FinalFacilityHealth;
         public int TotalCompletedEvents;
         public int TotalFailedEvents;
+        public ReportGrade Grade;
     }
 }

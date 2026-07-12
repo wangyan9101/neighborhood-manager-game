@@ -14,7 +14,7 @@ namespace NeighborhoodManager.UI
         public void Add(string message)
         {
             if (string.IsNullOrWhiteSpace(message)) return;
-            messages.Enqueue(message);
+            messages.Enqueue(UiTextFormatter.FormatLogEntry(message));
             while (messages.Count > 20) messages.Dequeue();
             logText.text = string.Join("\n", messages);
         }

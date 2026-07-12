@@ -20,17 +20,30 @@ namespace NeighborhoodManager.UI
 
         public void Refresh(IReadOnlyList<GameEventRuntime> events, string selectedId, Action<string> onSelected)
         {
-            EnsureCapacity(events.Count);
+            int visibleCount = 0;
+            for (int index = 0; index < events.Count; index++)
+            {
+                if (IsVisible(events[index])) visibleCount++;
+            }
+
+            EnsureCapacity(visibleCount);
+            int eventIndex = 0;
             for (int index = 0; index < items.Count; index++)
             {
-                bool active = index < events.Count;
+                while (eventIndex < events.Count && !IsVisible(events[eventIndex])) eventIndex++;
+                bool active = eventIndex < events.Count;
                 items[index].gameObject.SetActive(active);
                 if (active)
                 {
-                    GameEventRuntime gameEvent = events[index];
+                    GameEventRuntime gameEvent = events[eventIndex++];
                     items[index].Bind(gameEvent, gameEvent.RuntimeId == selectedId, onSelected);
                 }
             }
+        }
+
+        private static bool IsVisible(GameEventRuntime gameEvent)
+        {
+            return gameEvent.State == EventState.Pending || gameEvent.State == EventState.Handling;
         }
 
         private void EnsureCapacity(int count)

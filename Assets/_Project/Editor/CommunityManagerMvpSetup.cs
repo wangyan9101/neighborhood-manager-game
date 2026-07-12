@@ -68,6 +68,57 @@ namespace NeighborhoodManager.Editor
             Debug.Log("[Community Manager] 默认配置检查完成。");
         }
 
+        [MenuItem("Tools/Community Manager/Apply Demo 0.2 Config Content")]
+        public static void ApplyDemo02ConfigContent()
+        {
+            EnsureFolders();
+            CreateBalanceConfig(true);
+            CreateEventConfigs(true);
+            CreateWorkerConfigs(true);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            Debug.Log("[Community Manager] Demo 0.2 配置已更新为 9 个事件。请在 Game_MVP 的 GameRoot 中手动加入 4 个新增事件资产。");
+        }
+
+        [MenuItem("Tools/Community Manager/Apply Demo 0.2 Scene Wiring")]
+        public static void ApplyDemo02SceneWiring()
+        {
+            UnityScene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            GameRoot gameRoot = scene.GetRootGameObjects()
+                .SelectMany(root => root.GetComponentsInChildren<GameRoot>(true)).FirstOrDefault();
+            CameraController cameraController = scene.GetRootGameObjects()
+                .SelectMany(root => root.GetComponentsInChildren<CameraController>(true)).FirstOrDefault();
+            if (gameRoot == null || cameraController == null)
+                throw new InvalidOperationException("Game_MVP 缺少 GameRoot 或 CameraController。");
+
+            gameRoot.Configure(
+                AssetDatabase.LoadAssetAtPath<GameBalanceConfig>(BalancePath),
+                LoadAssets<EventConfig>(RootPath + "/Configs/Events"),
+                LoadAssets<WorkerConfig>(RootPath + "/Configs/Workers"),
+                gameRoot.GameUI);
+            cameraController.Configure(gameRoot);
+            EditorUtility.SetDirty(gameRoot);
+            EditorUtility.SetDirty(cameraController);
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+
+            int missingScripts = scene.GetRootGameObjects()
+                .SelectMany(root => root.GetComponentsInChildren<Transform>(true))
+                .Sum(item => GameObjectUtility.GetMonoBehavioursWithMissingScriptCount(item.gameObject));
+            int uiEventSystems = scene.GetRootGameObjects()
+                .SelectMany(root => root.GetComponentsInChildren<UnityEngine.EventSystems.EventSystem>(true)).Count();
+            int cameraControllers = scene.GetRootGameObjects()
+                .SelectMany(root => root.GetComponentsInChildren<CameraController>(true)).Count();
+            if (!gameRoot.ValidateReferences() || gameRoot.EventConfigs.Count != 9
+                || gameRoot.EventConfigs.Any(item => item == null) || !cameraController.HasRequiredReferences
+                || missingScripts != 0 || uiEventSystems != 1 || cameraControllers != 1)
+            {
+                throw new InvalidOperationException("Demo 0.2 场景接线验证失败，请检查 Console。");
+            }
+
+            Debug.Log("[Community Manager] Demo 0.2 场景接线完成：9 个事件、1 个摄像机控制器、1 个 UI EventSystem、0 个 Missing Script。");
+        }
+
         [MenuItem("Tools/Community Manager/Create MVP Scene")]
         public static void CreateMvpScene()
         {
@@ -117,6 +168,7 @@ namespace NeighborhoodManager.Editor
                 LoadAssets<EventConfig>(RootPath + "/Configs/Events"),
                 LoadAssets<WorkerConfig>(RootPath + "/Configs/Workers"),
                 ui);
+            root.GetComponentInChildren<CameraController>(true)?.Configure(gameRoot);
 
             EditorSceneManager.SaveScene(scene, ScenePath);
             EnsureSceneInBuildSettings();
@@ -130,8 +182,8 @@ namespace NeighborhoodManager.Editor
             var errors = new List<string>();
             if (AssetDatabase.LoadAssetAtPath<GameBalanceConfig>(BalancePath) == null)
                 errors.Add("缺少 GameBalanceConfig");
-            if (LoadAssets<EventConfig>(RootPath + "/Configs/Events").Count != 5)
-                errors.Add("事件配置数量不是 5");
+            if (LoadAssets<EventConfig>(RootPath + "/Configs/Events").Count != 9)
+                errors.Add("事件配置数量不是 9");
             if (LoadAssets<WorkerConfig>(RootPath + "/Configs/Workers").Count != 3)
                 errors.Add("员工配置数量不是 3");
             if (AssetDatabase.LoadAssetAtPath<SceneAsset>(ScenePath) == null)
@@ -149,6 +201,8 @@ namespace NeighborhoodManager.Editor
                 {
                     if (gameRoot.BalanceConfig == null || gameRoot.EventConfigs.Any(item => item == null)
                         || gameRoot.WorkerConfigs.Any(item => item == null)) errors.Add("GameRoot 存在空配置引用");
+                    if (gameRoot.EventConfigs.Count != 9)
+                        errors.Add("GameRoot 事件池不是 9 个；请在 Inspector 中加入 Demo 0.2 的 4 个新增事件");
                     if (gameRoot.GameUI == null || !gameRoot.GameUI.HasRequiredReferences)
                         errors.Add("GameUI 引用不完整");
                 }
@@ -180,40 +234,67 @@ namespace NeighborhoodManager.Editor
             }
         }
 
-        private static void CreateBalanceConfig()
+        private static void CreateBalanceConfig(bool updateExisting = false)
         {
-            if (AssetDatabase.LoadAssetAtPath<GameBalanceConfig>(BalancePath) != null) return;
-            GameBalanceConfig config = ScriptableObject.CreateInstance<GameBalanceConfig>();
-            AssetDatabase.CreateAsset(config, BalancePath);
+            GameBalanceConfig config = AssetDatabase.LoadAssetAtPath<GameBalanceConfig>(BalancePath);
+            if (config != null && !updateExisting) return;
+            bool isNew = config == null;
+            if (isNew) config = ScriptableObject.CreateInstance<GameBalanceConfig>();
+            config.InitialBudget = 2800;
+            config.DailyBaseIncome = 600;
+            config.HighSatisfactionThreshold = 80;
+            config.HighSatisfactionBonus = 200;
+            config.LowSatisfactionThreshold = 45;
+            config.LowSatisfactionPenalty = 200;
+            config.MinEventSpawnInterval = 12f;
+            config.MaxEventSpawnInterval = 22f;
+            config.MaxActiveEventCount = 4;
+            if (isNew) AssetDatabase.CreateAsset(config, BalancePath);
+            else EditorUtility.SetDirty(config);
         }
 
-        private static void CreateEventConfigs()
+        private static void CreateEventConfigs(bool updateExisting = false)
         {
             CreateEvent("ELEVATOR_BROKEN", "电梯故障", "电梯停止运行，需要尽快维修。", GameEventType.Fault,
-                FacilityType.Elevator, EventUrgency.Urgent, 32f, 12f, 300, WorkerType.Repairman,
-                0, 5, -2, 8, 0, -8, 3, -8);
-            CreateEvent("PARKING_OCCUPIED", "固定车位被占", "居民固定车位被其他车辆占用。", GameEventType.Security,
-                FacilityType.ParkingLot, EventUrgency.Normal, 30f, 10f, 100, WorkerType.Security,
-                0, 3, -1, 0, 0, -5, 2, 0);
+                FacilityType.Elevator, EventUrgency.Urgent, 42f, 28f, 350, WorkerType.Repairman,
+                0, 6, -2, 8, 0, -10, 3, -8, updateExisting);
+            CreateEvent("PARKING_OCCUPIED", "停车场纠纷", "居民固定车位被其他车辆占用。", GameEventType.Security,
+                FacilityType.ParkingLot, EventUrgency.Normal, 50f, 18f, 120, WorkerType.Security,
+                0, 3, -2, 0, 0, -5, 3, 0, updateExisting);
             CreateEvent("NOISE_COMPLAINT", "居民噪音投诉", "居民投诉持续噪音影响休息。", GameEventType.Complaint,
-                FacilityType.General, EventUrgency.Normal, 28f, 8f, 80, WorkerType.CustomerService,
-                0, 2, -1, 0, 0, -4, 2, 0);
+                FacilityType.General, EventUrgency.Normal, 55f, 16f, 80, WorkerType.CustomerService,
+                0, 2, -2, 0, 0, -4, 2, 0, updateExisting);
             CreateEvent("LOCKER_STUCK", "快递柜卡件", "快递柜仓门无法正常开启。", GameEventType.Fault,
-                FacilityType.ExpressLocker, EventUrgency.Normal, 30f, 10f, 150, WorkerType.Repairman,
-                0, 2, -1, 4, 0, -4, 2, -2);
+                FacilityType.ExpressLocker, EventUrgency.Normal, 48f, 22f, 180, WorkerType.Repairman,
+                0, 3, -1, 3, 0, -5, 3, -2, updateExisting);
             CreateEvent("CAMERA_OFFLINE", "摄像头离线", "公共区域摄像头失去连接。", GameEventType.Security,
-                FacilityType.Camera, EventUrgency.Urgent, 26f, 11f, 200, WorkerType.Security,
-                0, 2, -1, 6, 0, -3, 1, -5);
+                FacilityType.Camera, EventUrgency.Urgent, 65f, 24f, 220, WorkerType.Security,
+                0, 2, -1, 7, 0, -4, 1, -8, updateExisting);
+            CreateEvent("ELEV_002", "电梯运行异响", "电梯运行时出现异常噪音，需要排查。", GameEventType.Fault,
+                FacilityType.Elevator, EventUrgency.Normal, 55f, 22f, 220, WorkerType.Repairman,
+                0, 4, -1, 6, 0, -6, 2, -5, updateExisting);
+            CreateEvent("PARK_002", "地库道闸识别失败", "地库道闸无法识别车辆，需要检修。", GameEventType.Fault,
+                FacilityType.ParkingLot, EventUrgency.Normal, 60f, 25f, 240, WorkerType.Repairman,
+                0, 4, -2, 5, 0, -5, 2, -4, updateExisting);
+            CreateEvent("CHARGE_002", "充电车位被油车占用", "燃油车占用充电车位，引发居民投诉。", GameEventType.Security,
+                FacilityType.ChargingPile, EventUrgency.Normal, 45f, 17f, 70, WorkerType.Security,
+                0, 3, -2, 0, 0, -4, 2, 0, updateExisting);
+            CreateEvent("GEN_002", "楼道堆放纸箱", "楼道堆放纸箱影响通行和公共环境。", GameEventType.Environment,
+                FacilityType.General, EventUrgency.Normal, 50f, 18f, 100, WorkerType.CustomerService,
+                0, 3, -2, 0, 0, -3, 2, 0, updateExisting);
         }
 
         private static void CreateEvent(string id, string displayName, string description, GameEventType eventType,
             FacilityType facilityType, EventUrgency urgency, float pending, float duration, int cost,
             WorkerType recommendedWorker, int successBudget, int successSatisfaction, int successComplaint,
-            int successHealth, int failureBudget, int failureSatisfaction, int failureComplaint, int failureHealth)
+            int successHealth, int failureBudget, int failureSatisfaction, int failureComplaint, int failureHealth,
+            bool updateExisting = false)
         {
             string path = $"{RootPath}/Configs/Events/{id}.asset";
-            if (AssetDatabase.LoadAssetAtPath<EventConfig>(path) != null) return;
-            EventConfig config = ScriptableObject.CreateInstance<EventConfig>();
+            EventConfig config = AssetDatabase.LoadAssetAtPath<EventConfig>(path);
+            if (config != null && !updateExisting) return;
+            bool isNew = config == null;
+            if (isNew) config = ScriptableObject.CreateInstance<EventConfig>();
             config.EventId = id;
             config.DisplayName = displayName;
             config.Description = description;
@@ -232,25 +313,31 @@ namespace NeighborhoodManager.Editor
             config.FailureSatisfactionDelta = failureSatisfaction;
             config.FailureComplaintDelta = failureComplaint;
             config.FailureFacilityHealthDelta = failureHealth;
-            AssetDatabase.CreateAsset(config, path);
+            if (isNew) AssetDatabase.CreateAsset(config, path);
+            else EditorUtility.SetDirty(config);
         }
 
-        private static void CreateWorkerConfigs()
+        private static void CreateWorkerConfigs(bool updateExisting = false)
         {
-            CreateWorker("repairman_01", "维修工", WorkerType.Repairman);
-            CreateWorker("security_01", "保安", WorkerType.Security);
-            CreateWorker("service_01", "客服", WorkerType.CustomerService);
+            CreateWorker("repairman_01", "维修工", WorkerType.Repairman, updateExisting);
+            CreateWorker("security_01", "保安", WorkerType.Security, updateExisting);
+            CreateWorker("service_01", "客服", WorkerType.CustomerService, updateExisting);
         }
 
-        private static void CreateWorker(string id, string displayName, WorkerType type)
+        private static void CreateWorker(string id, string displayName, WorkerType type, bool updateExisting = false)
         {
             string path = $"{RootPath}/Configs/Workers/{id}.asset";
-            if (AssetDatabase.LoadAssetAtPath<WorkerConfig>(path) != null) return;
-            WorkerConfig config = ScriptableObject.CreateInstance<WorkerConfig>();
+            WorkerConfig config = AssetDatabase.LoadAssetAtPath<WorkerConfig>(path);
+            if (config != null && !updateExisting) return;
+            bool isNew = config == null;
+            if (isNew) config = ScriptableObject.CreateInstance<WorkerConfig>();
             config.WorkerId = id;
             config.DisplayName = displayName;
             config.WorkerType = type;
-            AssetDatabase.CreateAsset(config, path);
+            config.MatchDurationMultiplier = 1f;
+            config.MismatchDurationMultiplier = 1.6f;
+            if (isNew) AssetDatabase.CreateAsset(config, path);
+            else EditorUtility.SetDirty(config);
         }
 
         private static void CreateMaterials()
@@ -472,10 +559,10 @@ namespace NeighborhoodManager.Editor
         {
             GameObject item = CreatePanel("Event Item Prototype", parent, new Color(0.12f, 0.16f, 0.22f, 0.95f));
             LayoutElement element = item.AddComponent<LayoutElement>();
-            element.preferredHeight = 112;
+            element.preferredHeight = 170;
             AddVerticalLayout(item, 8);
             TMP_Text title = CreateText(item.transform, "Title", "事件", font, 25);
-            TMP_Text detail = CreateText(item.transform, "Detail", "详情", font, 19);
+            TMP_Text detail = CreateText(item.transform, "Detail", "详情", font, 17);
             Button button = CreateButton(item.transform, "Select", "选择事件", font);
             EventItemView view = item.AddComponent<EventItemView>();
             view.Configure(title, detail, button, item.GetComponent<Image>());
@@ -501,7 +588,7 @@ namespace NeighborhoodManager.Editor
         private static WorkerItemView CreateWorkerItem(Transform parent, TMP_FontAsset font)
         {
             GameObject item = CreatePanel("Worker Item Prototype", parent, new Color(0.12f, 0.16f, 0.22f, 0.95f));
-            item.AddComponent<LayoutElement>().preferredHeight = 105;
+            item.AddComponent<LayoutElement>().preferredHeight = 140;
             AddVerticalLayout(item, 8);
             TMP_Text title = CreateText(item.transform, "Title", "员工", font, 25);
             TMP_Text detail = CreateText(item.transform, "Detail", "空闲", font, 19);
@@ -553,7 +640,7 @@ namespace NeighborhoodManager.Editor
             RectTransform rect = panel.GetComponent<RectTransform>();
             rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
             rect.pivot = new Vector2(0.5f, 0.5f);
-            rect.sizeDelta = new Vector2(650, 520);
+            rect.sizeDelta = new Vector2(760, 700);
             rect.anchoredPosition = Vector2.zero;
             return panel;
         }

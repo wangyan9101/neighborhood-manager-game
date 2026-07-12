@@ -18,15 +18,15 @@ MonoBehaviour:
   EventType: 2
   FacilityType: 4
   Urgency: 1
-  PendingTimeLimit: 26
-  BaseHandleDuration: 11
-  BudgetCost: 200
+  PendingTimeLimit: 65
+  BaseHandleDuration: 24
+  BudgetCost: 220
   RecommendedWorkerType: 1
   SuccessBudgetDelta: 0
   SuccessSatisfactionDelta: 2
   SuccessComplaintDelta: -1
-  SuccessFacilityHealthDelta: 6
+  SuccessFacilityHealthDelta: 7
   FailureBudgetDelta: 0
-  FailureSatisfactionDelta: -3
+  FailureSatisfactionDelta: -4
   FailureComplaintDelta: 1
-  FailureFacilityHealthDelta: -5
+  FailureFacilityHealthDelta: -8

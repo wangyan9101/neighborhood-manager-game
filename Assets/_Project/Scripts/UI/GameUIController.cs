@@ -81,7 +81,11 @@ namespace NeighborhoodManager.UI
 
         private void RefreshWorkers()
         {
-            workerListPanel.Refresh(session.State.Workers, !string.IsNullOrEmpty(selectedEventRuntimeId), DispatchWorker);
+            GameEventRuntime selectedEvent = session.State.ActiveEvents.Find(item =>
+                item.RuntimeId == selectedEventRuntimeId && item.State == EventState.Pending);
+            workerListPanel.Refresh(session.State.Workers, selectedEvent, session.State.ActiveEvents,
+                workerId => selectedEvent == null ? null
+                    : session.GetExpectedHandleDuration(selectedEvent.RuntimeId, workerId), DispatchWorker);
         }
 
         private void SelectEvent(string runtimeId)

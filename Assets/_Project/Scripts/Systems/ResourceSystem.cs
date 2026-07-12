@@ -85,8 +85,13 @@ namespace NeighborhoodManager.Systems
             Changed?.Invoke();
         }
 
-        public void ApplyEventImpact(EventConfig config, bool succeeded)
+        public ResourceDelta ApplyEventImpact(EventConfig config, bool succeeded)
         {
+            int budgetBefore = resources.Budget;
+            int satisfactionBefore = resources.Satisfaction;
+            int complaintBefore = resources.ComplaintCount;
+            int healthBefore = resources.FacilityHealth;
+
             if (succeeded)
             {
                 ChangeBudget(config.SuccessBudgetDelta);
@@ -101,6 +106,12 @@ namespace NeighborhoodManager.Systems
                 ChangeComplaintCount(config.FailureComplaintDelta);
                 ChangeFacilityHealth(config.FailureFacilityHealthDelta);
             }
+
+            return new ResourceDelta(
+                resources.Budget - budgetBefore,
+                resources.Satisfaction - satisfactionBefore,
+                resources.ComplaintCount - complaintBefore,
+                resources.FacilityHealth - healthBefore);
         }
     }
 }

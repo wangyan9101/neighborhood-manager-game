@@ -35,15 +35,29 @@ namespace NeighborhoodManager.UI
             }
         }
 
-        public void Bind(WorkerRuntime worker, bool hasSelectedEvent, Action<string> onDispatch)
+        public void Bind(WorkerRuntime worker, GameEventRuntime selectedEvent, GameEventRuntime currentEvent,
+            float? expectedDuration, Action<string> onDispatch)
         {
             workerId = worker.WorkerId;
             dispatched = onDispatch;
-            titleText.text = $"{worker.WorkerName} · {worker.WorkerType}";
-            detailText.text = worker.State == WorkerState.Idle
-                ? "空闲"
-                : $"处理中：{worker.CurrentEventRuntimeId}（{Mathf.CeilToInt(worker.WorkRemainingTime)} 秒）";
-            dispatchButton.interactable = hasSelectedEvent && worker.State == WorkerState.Idle;
+            titleText.text = $"{worker.WorkerName} · {UiTextFormatter.FormatWorkerType(worker.WorkerType)}";
+            if (worker.State == WorkerState.Working)
+            {
+                string eventName = currentEvent?.Config?.DisplayName ?? worker.CurrentEventRuntimeId;
+                detailText.text = $"处理中：{eventName}\n剩余：{Mathf.CeilToInt(Mathf.Max(0f, worker.WorkRemainingTime))} 秒 | 当前不可派工";
+            }
+            else if (selectedEvent != null)
+            {
+                string match = worker.WorkerType == selectedEvent.Config.RecommendedWorkerType ? "推荐" : "不匹配";
+                string duration = expectedDuration.HasValue ? $"{expectedDuration.Value:0.#} 秒" : "--";
+                detailText.text = $"状态：空闲 | {match}\n预计处理时间：{duration}";
+            }
+            else
+            {
+                detailText.text = "状态：空闲";
+            }
+
+            dispatchButton.interactable = selectedEvent != null && worker.State == WorkerState.Idle;
         }
 
         private void Dispatch() => dispatched?.Invoke(workerId);

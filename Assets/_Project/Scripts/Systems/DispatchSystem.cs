@@ -1,3 +1,4 @@
+using NeighborhoodManager.Configs;
 using NeighborhoodManager.Models;
 
 namespace NeighborhoodManager.Systems
@@ -58,17 +59,32 @@ namespace NeighborhoodManager.Systems
             }
 
             resourceSystem.TrySpend(gameEvent.Config.BudgetCost);
-            float multiplier = worker.WorkerType == gameEvent.Config.RecommendedWorkerType
-                ? workerConfig.MatchDurationMultiplier
-                : workerConfig.MismatchDurationMultiplier;
-            float duration = gameEvent.Config.BaseHandleDuration * multiplier;
+            float duration = CalculateHandleDuration(gameEvent.Config, worker);
 
             gameEvent.State = EventState.Handling;
+            gameEvent.HandlingDuration = duration;
             gameEvent.HandlingRemainingTime = duration;
             gameEvent.AssignedWorkerId = workerId;
             workerSystem.Occupy(workerId, eventRuntimeId, duration);
             eventSystem.NotifyChanged();
             return DispatchResult.Succeeded($"已派{worker.WorkerName}处理{gameEvent.Config.DisplayName}，预算 -{gameEvent.Config.BudgetCost}。");
+        }
+
+        public float CalculateHandleDuration(EventConfig eventConfig, WorkerRuntime worker)
+        {
+            if (eventConfig == null) throw new System.ArgumentNullException(nameof(eventConfig));
+            if (worker == null) throw new System.ArgumentNullException(nameof(worker));
+
+            WorkerConfig workerConfig = workerSystem.GetConfig(worker.WorkerId);
+            if (workerConfig == null)
+            {
+                throw new System.InvalidOperationException("员工配置不存在。");
+            }
+
+            float multiplier = worker.WorkerType == eventConfig.RecommendedWorkerType
+                ? workerConfig.MatchDurationMultiplier
+                : workerConfig.MismatchDurationMultiplier;
+            return eventConfig.BaseHandleDuration * multiplier;
         }
     }
 }

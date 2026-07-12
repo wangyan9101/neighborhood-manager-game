@@ -35,9 +35,8 @@ namespace NeighborhoodManager.UI
         public void Show(GameResult result, Action onRestart)
         {
             restarted = onRestart;
-            resultText.text = $"{(result.IsVictory ? "胜利" : "失败")}\n{result.Message}\n预算：{result.FinalBudget}\n"
-                + $"满意度：{result.FinalSatisfaction}  投诉：{result.FinalComplaintCount}\n设备健康：{result.FinalFacilityHealth}\n"
-                + $"完成事件：{result.TotalCompletedEvents}  失败事件：{result.TotalFailedEvents}";
+            resultText.text = UiTextFormatter.FormatFinalResult(result);
+            restartButton.interactable = true;
             gameObject.SetActive(true);
         }
 
@@ -45,8 +44,12 @@ namespace NeighborhoodManager.UI
 
         private void Restart()
         {
+            if (!restartButton.interactable) return;
+            restartButton.interactable = false;
             Hide();
-            restarted?.Invoke();
+            Action callback = restarted;
+            restarted = null;
+            callback?.Invoke();
         }
 
         private void BindButton()

@@ -16,4 +16,4 @@ MonoBehaviour:
   DisplayName: "\u5BA2\u670D"
   WorkerType: 2
   MatchDurationMultiplier: 1
-  MismatchDurationMultiplier: 1.5
+  MismatchDurationMultiplier: 1.6

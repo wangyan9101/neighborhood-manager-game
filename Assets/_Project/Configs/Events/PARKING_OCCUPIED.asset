@@ -13,20 +13,20 @@ MonoBehaviour:
   m_Name: PARKING_OCCUPIED
   m_EditorClassIdentifier: NeighborhoodManager.Runtime::NeighborhoodManager.Configs.EventConfig
   EventId: PARKING_OCCUPIED
-  DisplayName: "\u56FA\u5B9A\u8F66\u4F4D\u88AB\u5360"
+  DisplayName: "\u505C\u8F66\u573A\u7EA0\u7EB7"
   Description: "\u5C45\u6C11\u56FA\u5B9A\u8F66\u4F4D\u88AB\u5176\u4ED6\u8F66\u8F86\u5360\u7528\u3002"
   EventType: 2
   FacilityType: 2
   Urgency: 0
-  PendingTimeLimit: 30
-  BaseHandleDuration: 10
-  BudgetCost: 100
+  PendingTimeLimit: 50
+  BaseHandleDuration: 18
+  BudgetCost: 120
   RecommendedWorkerType: 1
   SuccessBudgetDelta: 0
   SuccessSatisfactionDelta: 3
-  SuccessComplaintDelta: -1
+  SuccessComplaintDelta: -2
   SuccessFacilityHealthDelta: 0
   FailureBudgetDelta: 0
   FailureSatisfactionDelta: -5
-  FailureComplaintDelta: 2
+  FailureComplaintDelta: 3
   FailureFacilityHealthDelta: 0

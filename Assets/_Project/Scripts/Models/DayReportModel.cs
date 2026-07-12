@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace NeighborhoodManager.Models
 {
@@ -15,5 +16,7 @@ namespace NeighborhoodManager.Models
         public int ComplaintDelta;
         public int FacilityHealthDelta;
         public ReportGrade Grade;
+        public List<string> Reasons = new List<string>();
+        public List<string> TomorrowSuggestions = new List<string>();
     }
 }
